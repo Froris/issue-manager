@@ -1,13 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/prisma/client';
-import { createIssueSchema } from '@/app/validationSchemas';
+import { issueSchema } from '@/app/lib/validationSchemas';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/lib/authOptions';
 
 export async function POST(req: NextRequest) {
-  const body = await req.json();
-  const isValid = createIssueSchema.safeParse(body);
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return NextResponse.json({}, { status: 401 });
+  }
 
-  if (!isValid.success) {
-    return NextResponse.json({ error: isValid.error.errors }, { status: 400 });
+  const body = await req.json();
+  // safeParse:  https://zod.dev/?id=safeparse
+  const validation = issueSchema.safeParse(body);
+
+  if (!validation.success) {
+    const errors = validation.error.format()._errors;
+    return NextResponse.json({ error: errors }, { status: 400 });
   }
 
   const newIssue = await prisma.issue.create({
