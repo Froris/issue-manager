@@ -21,7 +21,7 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   const assignIssue = (userId: string) => {
     axios
       .patch('/api/issues/' + issue.id, {
-        assignedToUserId: UNASSIGNED ? null : userId,
+        assignedToUserId: userId === UNASSIGNED ? null : userId,
       })
       .catch(() => toast.error(ERROR_MESSAGE));
   };
