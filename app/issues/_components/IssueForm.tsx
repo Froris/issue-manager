@@ -90,8 +90,7 @@ const IssueForm = ({ issue }: { issue?: Issue }) => {
         <Button
           disabled={isSubmitting}
           type='submit'
-          color='violet'
-          variant='solid'>
+          style={{ backgroundColor: 'var(--accent-9)' }}>
           {issue ? 'Edit Issue' : 'Submit New Issue'}{' '}
           {isSubmitting && <Spinner />}
         </Button>
